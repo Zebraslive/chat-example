@@ -8,8 +8,8 @@ app.get('/', function(req, res){
 });
 var vuur = 0;
 io.on('connection', function(socket){
-  vuur = socket.client.conn.server.clientsCount;
    socket.on('visit', function(msg){
+     vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', vuur);
    });
   socket.on('disconnect', function () {
