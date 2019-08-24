@@ -9,9 +9,9 @@ app.get('/', function(req, res){
 var vuur = 0;
 var users = {};
 io.on('connection', function(socket){
-    if (users.length === 0 || users.length == "0") {
+   
       users[socket.username] = socket;
-     }
+     
    socket.on('visit', function(msg){
      var i;
     
