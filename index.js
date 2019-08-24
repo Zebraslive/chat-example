@@ -21,9 +21,9 @@ io.on('connection', function(socket){
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
-    var userixk = connsx[socket.id]; //disconnecting user id;
+    var userixk = connsx[socket.id];
 delete users[userixk];
-delete connsx[users[userixk]];
+
     io.emit('visit', {total: vuur, uniq: actualx});
   });
 });
