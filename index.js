@@ -23,7 +23,7 @@ io.on('connection', function(socket){
     vuur = socket.client.conn.server.clientsCount;
     var userixk = connsx[socket.id];
 delete users[userixk];
-
+ var actualx = Object.keys(users).length;
     io.emit('visit', {total: vuur, uniq: actualx});
   });
 });
