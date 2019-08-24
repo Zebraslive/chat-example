@@ -9,7 +9,7 @@ app.get('/', function(req, res){
 var vuur = 0;
 var users = {};
 io.on('connection', function(socket){
-   
+   var soiffi = socket.username;
       users[socket.username] = socket;
      
    socket.on('visit', function(msg){
@@ -27,7 +27,7 @@ io.on('connection', function(socket){
    
     
      vuur = socket.client.conn.server.clientsCount;
-     io.emit('visit', {total: vuur, uniq: users.length});
+     io.emit('visit', {total: vuur, uniq: ''+users.length+'', userx: soiffi});
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
