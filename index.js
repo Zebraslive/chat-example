@@ -8,13 +8,16 @@ app.get('/', function(req, res){
 });
 var vuur = 0;
 const users = {};
+const connsx = {};
 io.on('connection', function(socket){
-    
+
    socket.on('visit', function(msg){
- 
- 
+ socket.username = msg.username;
+ users[msg.username] = socket.id;
+ connsx[socket.id] = msg.username;
+ var actualx = Object.keys(users).length;
      vuur = socket.client.conn.server.clientsCount;
-     io.emit('visit', vuur);
+     io.emit('visit', {total: vuur, uniq: users.length, ffx: actualx});
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
