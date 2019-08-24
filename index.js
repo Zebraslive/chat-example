@@ -11,14 +11,15 @@ var users = [];
 io.on('connection', function(socket){
   
    socket.on('visit', function(msg){
-     if ( users.indexOf(msg.username) == -1 ) { 
-  socket.nickname = msg.username;
+     for (i = 0; i < users.length; i++) {
+  if (msg.username === users[i]) {
+     users[msg.username].push(socket);
+  } else {
+     socket.nickname = msg.username;
    users[socket.nickname] = [socket];
-} else {
-    users[msg.username].push(socket);
+  }
 }
-  
-
+    
      vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', {total: vuur, uniq: users.length});
    });
