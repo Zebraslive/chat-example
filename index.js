@@ -33,7 +33,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
     delete users[users[socket.nickname]];
-    io.emit('visit', users.length);
+    io.emit('visit', {total:users.length});
   });
 });
 
