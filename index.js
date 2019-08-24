@@ -7,7 +7,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 var vuur = 0;
-const users = [ ]
+const users = [ ];
 io.on('connection', function(socket){
   
    socket.on('visit', function(msg){
