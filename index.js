@@ -13,10 +13,10 @@ io.on('connection', function(socket){
    socket.on('visit', function(msg){
      for (i = 0; i < users.length; i++) {
   if (msg.username === users[i]) {
-     users[msg.username].push(socket);
+     users[msg.username].push(socket.id);
   } else {
      socket.nickname = msg.username;
-   users[socket.nickname] = [socket];
+   users[socket.nickname] = socket.id;
   }
 }
     
