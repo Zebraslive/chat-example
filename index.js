@@ -8,10 +8,9 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  io.emit('chat message', socket.client.conn.server.clientsCount);
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
+  var vuur = socket.client.conn.server.clientsCount;
+   io.emit('visit', vuur);
+  
 });
 
 http.listen(port, function(){
