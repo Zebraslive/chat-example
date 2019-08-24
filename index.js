@@ -11,10 +11,9 @@ const users = {};
 io.on('connection', function(socket){
     
    socket.on('visit', function(msg){
-     var i;
+ 
     
         socket.nickname = msg.username;
-   users[msg.username] = socket.id;
      users[msg.username].push(socket.id);
     
     
