@@ -12,7 +12,7 @@ io.on('connection', function(socket){
   
    socket.on('visit', function(msg){
      var i;
-     if (users.length === 0) {
+     if (users.length <= 0) {
         socket.nickname = msg.username;
    users[socket.nickname] = socket.id;
      } else {
