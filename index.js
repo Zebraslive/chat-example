@@ -7,25 +7,24 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 var vuur = 0;
-var users = [];
+var users = {};
 io.on('connection', function(socket){
-    if (users.length <= 0) {
-        socket.nickname = socket.username;
-   users[socket.nickname] = socket.id;
+    if (users.length === 0 || users.length == "0") {
+      users[socket.username] = socket;
      }
    socket.on('visit', function(msg){
      var i;
     
          for (i = 0; i < users.length; i++) {
   if (msg.username === users[i]) {
-     users[msg.username].push(socket.id);
+     users[msg.username].push(socket);
   } else {
-     socket.nickname = msg.username;
-   users[socket.nickname] = socket.id;
+  
+   users[msg.username] = socket;
   }
 
      }
-    io.emit('tik', users.length+"bha");
+   
     
      vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', {total: vuur, uniq: users.length});
