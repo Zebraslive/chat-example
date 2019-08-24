@@ -12,10 +12,10 @@ io.on('connection', function(socket){
     
    socket.on('visit', function(msg){
      var i;
-    if (users.length <= 0) {
+    
         socket.nickname = msg.username;
    users[msg.username] = socket.id;
-     }
+     
          for (i = 0; i < users.length; i++) {
   if (msg.username === users[i]) {
      users[msg.username].push(socket.id);
