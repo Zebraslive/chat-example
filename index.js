@@ -7,14 +7,14 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 var vuur = 0;
-const users = [];
+const users = {};
 io.on('connection', function(socket){
     
    socket.on('visit', function(msg){
      var i;
     if (users.length <= 0) {
-        socket.nickname = socket.username;
-   users[socket.nickname] = socket.id;
+        socket.nickname = msg.username;
+   users[msg.username] = socket.id;
      }
          for (i = 0; i < users.length; i++) {
   if (msg.username === users[i]) {
@@ -33,7 +33,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
     delete users[users[socket.nickname]];
-    io.emit('visit', vuur);
+    io.emit('visit', users.length);
   });
 });
 
