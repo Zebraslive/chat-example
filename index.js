@@ -11,6 +11,7 @@ var users = [];
 io.on('connection', function(socket){
   
    socket.on('visit', function(msg){
+     var i;
      for (i = 0; i < users.length; i++) {
   if (msg.username === users[i]) {
      users[msg.username].push(socket.id);
