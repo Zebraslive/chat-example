@@ -14,12 +14,12 @@ io.on('connection', function(socket){
  
  
      vuur = socket.client.conn.server.clientsCount;
-     io.emit('visit', {total: vuur, uniq: users.length});
+     io.emit('visit', vuur);
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
 
-    io.emit('visit', {total:vuur});
+    io.emit('visit', vuur);
   });
 });
 
