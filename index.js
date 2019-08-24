@@ -17,12 +17,14 @@ io.on('connection', function(socket){
  connsx[socket.id] = msg.username;
  var actualx = Object.keys(users).length;
      vuur = socket.client.conn.server.clientsCount;
-     io.emit('visit', {total: vuur, uniq: users.length, ffx: actualx});
+     io.emit('visit', {total: vuur, uniq: actualx});
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
-
-    io.emit('visit', vuur);
+    var userixk = connsx[socket.id]; //disconnecting user id;
+delete users[userixk];
+delete connsx[users[userixk]];
+    io.emit('visit', {total: vuur, uniq: actualx});
   });
 });
 
