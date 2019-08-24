@@ -24,6 +24,9 @@ io.on('connection', function(socket){
     var userixk = connsx[socket.id];
 delete users[userixk];
  var actualx = Object.keys(users).length;
+ if (vuur == 1) {
+   actualx = 1;
+ }
     io.emit('visit', {total: vuur, uniq: actualx});
   });
 });
