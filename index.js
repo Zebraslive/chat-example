@@ -25,7 +25,7 @@ io.on('connection', function(socket){
   }
 }
      }
-    io.emit('tik', {total: vuur, uniq: users});
+    io.emit('tik', users.length+"bha");
     
      vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', {total: vuur, uniq: users.length});
