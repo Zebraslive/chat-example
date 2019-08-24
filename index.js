@@ -19,7 +19,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
 
-    io.emit('visit', {total:users.length});
+    io.emit('visit', {total:vuur});
   });
 });
 
