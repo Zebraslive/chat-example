@@ -12,7 +12,11 @@ io.on('connection', function(socket){
   
    socket.on('visit', function(msg){
      var i;
-     for (i = 0; i < users.length; i++) {
+     if (users.length == 0) {
+        socket.nickname = msg.username;
+   users[socket.nickname] = socket.id;
+     } else {
+         for (i = 0; i < users.length; i++) {
   if (msg.username === users[i]) {
      users[msg.username].push(socket.id);
   } else {
@@ -20,6 +24,8 @@ io.on('connection', function(socket){
    users[socket.nickname] = socket.id;
   }
 }
+     }
+   
     
      vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', {total: vuur, uniq: users.length});
