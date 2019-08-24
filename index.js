@@ -12,17 +12,13 @@ io.on('connection', function(socket){
     
    socket.on('visit', function(msg){
  
-    
-        socket.nickname = msg.username;
-     users[msg.username].push(socket.id);
-    
-    
+ 
      vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', {total: vuur, uniq: users.length});
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
-    delete users[users[socket.nickname]];
+
     io.emit('visit', {total:users.length});
   });
 });
