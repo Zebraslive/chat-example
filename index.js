@@ -10,6 +10,7 @@ var vuur = 0;
 const users = {};
 const connsx = {};
 const watching = {};
+const watchers = {};
 io.on('connection', function(socket){
 
    socket.on('visit', function(msg){
@@ -40,19 +41,23 @@ if (msg.sid in watching) {
   msg.tot = 1;
 }
       watching[msg.sid] = msg.tot;
-
+      watchers[socket.username] = msg.sid;
 
   io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
   });
   socket.on('close Episode', function(msg){
 if (msg.sid in watching) {
-  var isgfi = parseInt(watching[msg.sid]);
-  msg.tot = isgfi-1;
+  if (watchers[socket.username] === msg.sid) {
+    var isgfi = parseInt(watching[msg.sid]);
+    msg.tot = isgfi-1;
+    watching[msg.sid] = msg.tot;
+io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
+  } else {
+    socket.emit('errorx', "user is not watching this episode, can not complete action");
+  }
+
 }
-      watching[msg.sid] = msg.tot;
 
-
-  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
   });
 });
 
