@@ -26,6 +26,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
     var userixk = connsx[socket.id];
+    delete watchers[socket.username];
 delete users[userixk];
  var actualx = Object.keys(users).length;
  if (vuur == 1) {
@@ -45,12 +46,34 @@ if (msg.sid in watching) {
 
   io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
   });
+  socket.on('change episode', function(msg) {
+    if (msg.old_sid in watching) {
+      if (socket.username in watchers) {
+        var isgfi = parseInt(watching[msg.old_sid]);
+        var gihri = isgfi-1;
+        watching[msg.old_sid] = gihri;
+      watchers[socket.username] = msg.new_sid;
+      if (msg.new_sid in watching) {
+        var isgfi = parseInt(watching[msg.new_sid]);
+        var siigf = 1+isgfi;
+      } else {
+        var siigf = 1;
+      }
+      watching[msg.new_sid] = siigf;
+    io.emit('change episode', {user: socket.username, newid: msg.new_sid});
+      } else {
+        socket.emit('errorx', "can not complete action");
+      }
+
+    }
+  });
   socket.on('close Episode', function(msg){
 if (msg.sid in watching) {
   if (watchers[socket.username] === msg.sid) {
     var isgfi = parseInt(watching[msg.sid]);
     msg.tot = isgfi-1;
     watching[msg.sid] = msg.tot;
+    delete watchers[socket.username];
 io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
   } else {
     socket.emit('errorx', "user is not watching this episode, can not complete action");
