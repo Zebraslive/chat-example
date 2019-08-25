@@ -33,7 +33,9 @@ delete users[userixk];
     io.emit('leftserver', {total: vuur, uniq: actualx});
   });
   socket.on('click Episode', function(msg){
-
+if (msg.sid in watching) {
+  msg.tot = 1+watching[msg.sid];
+}
       watching[msg.sid] = msg.tot;
 
 
