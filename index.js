@@ -34,7 +34,8 @@ delete users[userixk];
   });
   socket.on('click Episode', function(msg){
 if (msg.sid in watching) {
-  msg.tot = 1+watching[msg.sid];
+  var isgfi = parseInt(watching[msg.sid]);
+  msg.tot = 1+isgfi;
 }
       watching[msg.sid] = msg.tot;
 
