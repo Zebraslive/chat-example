@@ -21,7 +21,7 @@ io.on('connection', function(socket){
  connsx[socket.id] = msg.username;
  var actualx = Object.keys(users).length;
      vuur = socket.client.conn.server.clientsCount;
-     io.emit('visit', {total: vuur, uniq: actualx});
+     io.emit('visit', {total: vuur, uniq: actualx, user:msg.username});
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
@@ -32,7 +32,7 @@ delete users[userixk];
  if (vuur == 1) {
    actualx = 1;
  }
-    io.emit('leftserver', {total: vuur, uniq: actualx});
+    io.emit('leftserver', {total: vuur, uniq: actualx, user:userixk});
   });
   socket.on('click Episode', function(msg){
 if (msg.sid in watching) {
@@ -44,7 +44,7 @@ if (msg.sid in watching) {
       watching[msg.sid] = msg.tot;
       watchers[socket.username] = msg.sid;
 
-  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
+  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, user:socket.username, title:msg.title});
   });
   socket.on('change episode', function(msg) {
     if (msg.old_sid in watching) {
@@ -60,7 +60,7 @@ if (msg.sid in watching) {
         var siigf = 1;
       }
       watching[msg.new_sid] = siigf;
-    io.emit('change episode', {user: socket.username, newid: msg.new_sid});
+    io.emit('change episode', {user: socket.username, newid: msg.new_sid, title:msg.title});
       } else {
         socket.emit('errorx', "can not complete action");
       }
