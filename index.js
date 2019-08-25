@@ -33,8 +33,11 @@ delete users[userixk];
     io.emit('leftserver', {total: vuur, uniq: actualx});
   });
   socket.on('click Episode', function(msg){
-     users[msg.sid] = msg.tot;
-  io.emit('click Episode', {total: msg.tot, sid: msg.sid});
+
+      watching[msg.sid] = msg.tot;
+
+
+  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
   });
 });
 
@@ -75,7 +78,7 @@ http.listen(port, function(){
 //     console.log("statusCode: ", res.statusCode);
 //     // uncomment it for header details
 // //  console.log("headers: ", res.headers);
-// 
+//
 //     res.on('data', function(d) {
 //         console.info('POST result:\n');
 //         process.stdout.write(d);
