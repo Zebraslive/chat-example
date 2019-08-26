@@ -44,7 +44,7 @@ if (msg.sid in watching) {
       watching[msg.sid] = msg.tot;
       watchers[socket.username] = msg.sid;
 
-  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, user:socket.username, title:msg.title});
+  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, user:socket.username, title:msg.title, allU:watchers.length});
   });
   socket.on('change episode', function(msg) {
     if (msg.old_sid in watching) {
