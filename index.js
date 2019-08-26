@@ -1,7 +1,6 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var fs = require("fs");
 var port = process.env.PORT || 3000;
 
 app.get('/', function(req, res){
@@ -12,15 +11,6 @@ const users = {};
 const connsx = {};
 const watching = {};
 const watchers = {};
-fs.access('users.txt', fs.F_OK, (err) => {
-  if (err) {
-    console.error(err)
-    return
-  }
-  var buffer = fs.readFileSync("users.txt");
-  users = buffer.toString();
-  //file exists
-})
 io.on('connection', function(socket){
 
    socket.on('visit', function(msg){
@@ -32,12 +22,6 @@ io.on('connection', function(socket){
  var actualx = Object.keys(users).length;
      vuur = socket.client.conn.server.clientsCount;
      io.emit('visit', {total: vuur, uniq: actualx, user:msg.username});
-     fs.writeFile("users.txt", users, (err) => {
-  if (err) io.emit('console msg', err);
-  var buffer = fs.readFileSync("users.txt");
-  users = buffer.toString();
-  io.emit('console msg', users);
-});
    });
   socket.on('disconnect', function () {
     vuur = socket.client.conn.server.clientsCount;
