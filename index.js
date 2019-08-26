@@ -60,7 +60,7 @@ if (msg.sid in watching) {
         var siigf = 1;
       }
       watching[msg.new_sid] = siigf;
-    io.emit('change episode', {user: socket.username, newid: msg.new_sid, title:msg.title});
+    io.emit('change episode', {user: socket.username, newid: msg.new_sid, oldid: msg.old_sid, title:msg.title});
       } else {
         socket.emit('errorx', "can not complete action");
       }
