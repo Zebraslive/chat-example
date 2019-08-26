@@ -43,8 +43,8 @@ if (msg.sid in watching) {
 }
       watching[msg.sid] = msg.tot;
       watchers[socket.username] = msg.sid;
-
-  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, user:socket.username, title:msg.title, allU:watchers.length});
+ var actfsf = Object.keys(watchers).length;
+  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, user:socket.username, title:msg.title, allU:actfsf});
   });
   socket.on('change episode', function(msg) {
     if (msg.old_sid in watching) {
@@ -68,13 +68,14 @@ if (msg.sid in watching) {
     }
   });
   socket.on('close Episode', function(msg){
+     var actfsf = Object.keys(watchers).length;
 if (msg.sid in watching) {
   if (watchers[socket.username] === msg.sid) {
     var isgfi = parseInt(watching[msg.sid]);
     msg.tot = isgfi-1;
     watching[msg.sid] = msg.tot;
     delete watchers[socket.username];
-io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid});
+io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
   } else {
     socket.emit('errorx', "user is not watching this episode, can not complete action");
   }
