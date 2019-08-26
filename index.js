@@ -75,6 +75,7 @@ if (msg.sid in watching) {
     msg.tot = isgfi-1;
     watching[msg.sid] = msg.tot;
     delete watchers[socket.username];
+    io.emit('stoppedWatching', {user:socket.username});
 io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
   } else {
     socket.emit('errorx', "user is not watching this episode, can not complete action");
