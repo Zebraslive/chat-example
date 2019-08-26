@@ -63,6 +63,7 @@ if (msg.sid in watching) {
     io.emit('change episode', {user: socket.username, newid: msg.new_sid, oldid: msg.old_sid, title:msg.title, total_watching:siigf, old_watching:watching[msg.old_sid]});
       } else {
         socket.emit('errorx', "can not complete action");
+        socket.disconnect();
       }
 
     }
