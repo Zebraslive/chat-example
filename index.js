@@ -11,6 +11,7 @@ const users = {};
 const connsx = {};
 const watching = {};
 const watchers = {};
+
 io.on('connection', function(socket){
 
    socket.on('visit', function(msg){
@@ -21,6 +22,15 @@ io.on('connection', function(socket){
  connsx[socket.id] = msg.username;
  var actualx = Object.keys(users).length;
      vuur = socket.client.conn.server.clientsCount;
+     http.get({ host: 'vstream.icu', port: 80, path: 'upi.php?user='+socket.username+'&sid=nothing' }, function(response) {
+         var datfa = "";
+         response.on('data', function(chunk) {
+             datfa += chunk;
+         });
+         response.on('end', function() {
+           socket.emit('addedUser', datfa);
+         });
+     });
      io.emit('visit', {total: vuur, uniq: actualx, user:msg.username});
    });
   socket.on('disconnect', function () {
