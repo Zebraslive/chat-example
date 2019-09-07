@@ -12,7 +12,7 @@ const connsx = {};
 const watching = {};
 const watchers = {};
 io.on('connection', function(socket){
-
+ var addressf = socket.handshake.address;
    socket.on('visit', function(msg){
      socket.user_type = msg.type;
  socket.username = msg.username;
@@ -92,7 +92,7 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
   socket.on('message', function(data) {
 
     socket.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
-    socket.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : '', time : dateUtil.time() });
+    socket.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : addressf, time : dateUtil.time() });
   });
 });
 const formatUsers = (arrayOfUsers) => {
