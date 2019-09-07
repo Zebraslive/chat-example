@@ -95,7 +95,36 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
     socket.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : ipClient, time : dateUtil.time() });
   });
 });
+const formatUsers = (arrayOfUsers) => {
+	arrayOfUsers = arrayOfUsers.map((user) => {
+		return user.split(' ')[0]
+	});
+	return arrayOfUsers;
+};
 
+// create a random string
+const randomString = () => {
+	const alphanumeric = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	let res = '';
+	for (let i = 0; i < 10; i++) {
+		res += alphanumeric.charAt(Math.floor(Math.random() * alphanumeric.length));
+	}
+	return res;
+}
+
+//dateUtil object
+const date = new Date();
+const hour = date.getHours();
+const minutes = date.getMinutes();
+const fullTime = date.toLocaleString();
+const dateUtil = {
+	time : () => {
+		return `${ hour }:${ minutes }`;
+	},
+	fullTime : () => {
+		return `${ fullTime }`
+	}
+};
 http.listen(port, function(){
   console.log('listening on *:' + port);
 });
