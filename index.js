@@ -91,7 +91,7 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
 
   socket.on('message', function(data) {
 
-    socket.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
+    socket.broadcast.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
     socket.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : addressf, time : dateUtil.time() });
   });
 });
