@@ -130,13 +130,8 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
 		let handshake = socket.handshake;
 		let ipClient = handshake.address;
 		clients.push({ ip : ipClient, id : socket.id });
-		logWriter.write(`INFO_CONN -- ${ dateUtil.time() } -- ${ ipClient }\n`);
 
-		// if ipClient is in bannedAddresses => disconnect from chat
-		let bannedAddresses = fs.readFileSync(`${ pathToFiles }banned-addresses`, 'utf-8').split(/\r?\n/);
-		if (bannedAddresses.includes(ipClient)) {
-			banClient();
-		}
+
 
 		// message from client => broadcast to all clients
 		socket.on('message', (data) => {
