@@ -104,76 +104,20 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
 		// emit and update clients number
 		socket.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
 		socket.broadcast.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
+    socket.on('message', (data) => {
 
-		// banClient function
-		// (case detected @IP banned at connexion (no arg)) : @IP is not allowed to create a socket conn => disconnect
-		// (case asked by admin on connected client(ip arg)) : for all socketId owned by @IP banned => disconnect
-		const banClient = (ip) => {
-			let bannedObject = {
-				message : 'It looks like you did something wrong, you are banned from the chat',
-				time : dateUtil.time()
-			}
-			if (!ip) {
-				socket.emit('banned', bannedObject);
-				socket.disconnect();
-			} else {
-				for (let client of clients) {
-					if (client.ip === ip) {
-						io.sockets.to(client.id).emit('banned', bannedObject);
-						socket.disconnect();
-					}
-				}
-			}
-		}
-
-		// get client @IP, store in const clients[] and log
-		let handshake = socket.handshake;
-		let ipClient = handshake.address;
-		clients.push({ ip : ipClient, id : socket.id });
-
-
-
-		// message from client => broadcast to all clients
-		socket.on('message', (data) => {
-			logWriter.write(`NEW_MSG -- ${ dateUtil.fullTime() } -- ${ ipClient } -- ${ data.name } -- ${ data.message }\n`);
 			socket.broadcast.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
 			socket.broadcast.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : ipClient, time : dateUtil.time() });
 		});
+		// banClient function
+		// (case detected @IP banned at connexion (no arg)) : @IP is not allowed to create a socket conn => disconnect
+		// (case asked by admin on connected client(ip arg)) : for all socketId owned by @IP banned => disconnect
 
-		// message from admin => broadcast to all clients with style
-		socket.on('messageFromAdmin', (data) => {
-			if(socket.handshake.session.isAdmin) {
-				logWriter.write(`ADMIN_MSG -- ${ dateUtil.fullTime() } name : ${ data.name } MESSAGE : ${ data.message }\n`);
-				socket.broadcast.emit('messageFromAdmin', { name : data.name, message : data.message, time : dateUtil.time() });
-			}
-		});
 
-		// ban this IP on request from an admin
-		// server log, write to banned-addresses, call banClient(), push to globalBannedAddresses
-		socket.on('banIp', (ip) => {
-			if(socket.handshake.session.isAdmin) {
-				logWriter.write(`ADMIN_BAN -- ${ dateUtil.fullTime() } -- ${ ip }\n`);
-				let banWriter = fs.createWriteStream(`${ pathToFiles }banned-addresses`, { flags : 'a' });
-				banWriter.write(`\n${ ip }`);
-				banWriter.end();
-				banClient(ip);
-				globalBannedAddresses.push(ip);
-			}
-		});
 
-		// add administrator
-		socket.on('addAdmin', (data) => {
-			if(socket.handshake.session.isAdmin || setupMode) {
-				bcrypt.hash(data.password, saltRounds, (err, hash) => {
-					let usersWriter = fs.createWriteStream(`${ pathToFiles }users`, { flags : 'a' });
-					usersWriter.write(`\n${ data.name } ${ hash }`);
-					usersWriter.end();
-				});
-				globalUsersFormated.push(data.name);
-			}
-		});
 
-		// update client number on disconnect
+
+
 
 });
 
