@@ -2,7 +2,16 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
-
+const fs = require('fs');
+	const path = require('path');
+	const pathToFiles = 'node_modules/node-chat-js/';
+	const bodyParser = require('body-parser');
+	// create a session with a random string as secret
+	const session = require('express-session')({
+		secret : randomString(),
+		resave : true,
+		saveUninitialized : true
+	});
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -85,25 +94,6 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
 }
 
   });
-  socket.on('updateClientNumber', (data) => {
-    getClientNumber(data.clientNumber);
-});
-
-// add message from server to DOM
-socket.on('message', (data) => {
-    appendMessageToDOM(data.name, data.message, null, data.time);
-});
-
-// add message from server (admin) to DOM
-socket.on('messageFromAdmin', (data) => {
-    appendMessageToDOM(data.name, data.message, 'admin', data.time);
-});
-
-// banned from chat
-socket.on('banned', (data) => {
-    appendMessageToDOM('BAN' , data.message, 'banned', data.time);
-});
-
 });
 
 http.listen(port, function(){
