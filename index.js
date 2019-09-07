@@ -95,16 +95,7 @@ io.sockets.on('connection', (socket) => {
 
   // ban this IP on request from an admin
   // server log, write to banned-addresses, call banClient(), push to globalBannedAddresses
-  socket.on('banIp', (ip) => {
-    if(socket.handshake.session.isAdmin) {
-      logWriter.write(`ADMIN_BAN -- ${ dateUtil.fullTime() } -- ${ ip }\n`);
-      let banWriter = fs.createWriteStream(`${ pathToFiles }banned-addresses`, { flags : 'a' });
-      banWriter.write(`\n${ ip }`);
-      banWriter.end();
-      banClient(ip);
-      globalBannedAddresses.push(ip);
-    }
-  });
+
 
   // add administrator
   socket.on('addAdmin', (data) => {
