@@ -100,7 +100,7 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
 
   });
   // open log in append mode
-		let logWriter = fs.createWriteStream(`${ pathToFiles }log`, { flags : 'a' });
+
 		// emit and update clients number
 		socket.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
 		socket.broadcast.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
