@@ -2,20 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
-const fs = require('fs');
-	const path = require('path');
-	const pathToFiles = '';
-	const bodyParser = require('body-parser');
-	// create a session with a random string as secret
-	const session = require('express-session')({
-		secret : randomString(),
-		resave : true,
-		saveUninitialized : true
-	});
-  const sharedSession = require('express-socket.io-session');
-	const bcrypt = require('bcrypt');
-	// difficulty of the hash function
-	const saltRounds = 10;
+
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
