@@ -2,151 +2,110 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
-const fs = require('fs');
-const path = require('path');
-const pathToFiles = '';
-const bodyParser = require('body-parser');
-// create a session with a random string as secret
-const session = require('express-session')({
-  secret : randomString(),
-  resave : true,
-  saveUninitialized : true
+
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/index.html');
 });
+var vuur = 0;
+const users = {};
+const connsx = {};
+const watching = {};
+const watchers = {};
+io.on('connection', function(socket){
 
-const sharedSession = require('express-socket.io-session');
-const bcrypt = require('bcrypt');
-// difficulty of the hash function
-const saltRounds = 10;
-let setupMode = fs.readFileSync(`${ pathToFiles }users`, 'utf-8') === '';
-// watch any change on the users file
-const setupModeWatcher = fs.watch(`${ pathToFiles }users`);
-
-setupModeWatcher.on('change', () => {
-  setupMode = fs.readFileSync(`${ pathToFiles }users`, 'utf-8') === '';
-});
-
-// global bannedAddresses & users (out of IO scope)
-const globalBannedAddresses = fs.readFileSync(`${ pathToFiles }banned-addresses`, 'utf-8').split(/\r?\n/);
-const globalUsers = fs.readFileSync(`${ pathToFiles }users`, 'utf-8').split(/\r?\n/);
-// to render users list without password
-const globalUsersFormated = formatUsers(globalUsers);
-
-// session
-app.use(session);
-// share session with socket.io connections
-io.use(sharedSession(session));
-
-// webSockets
-const clients = [];
-io.sockets.on('connection', (socket) => {
-  // open log in append mode
-  let logWriter = fs.createWriteStream(`${ pathToFiles }log`, { flags : 'a' });
-  // emit and update clients number
-  socket.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
-  socket.broadcast.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
-
-  // banClient function
-  // (case detected @IP banned at connexion (no arg)) : @IP is not allowed to create a socket conn => disconnect
-  // (case asked by admin on connected client(ip arg)) : for all socketId owned by @IP banned => disconnect
-  const banClient = (ip) => {
-    let bannedObject = {
-      message : 'It looks like you did something wrong, you are banned from the chat',
-      time : dateUtil.time()
-    }
-    if (!ip) {
-      socket.emit('banned', bannedObject);
-      socket.disconnect();
-    } else {
-      for (let client of clients) {
-        if (client.ip === ip) {
-          io.sockets.to(client.id).emit('banned', bannedObject);
-          socket.disconnect();
-        }
+   socket.on('visit', function(msg){
+     socket.user_type = msg.type;
+ socket.username = msg.username;
+ users[msg.username] = socket.id;
+ users[msg.username]['type'] = socket.user_type;
+ connsx[socket.id] = msg.username;
+ var actualx = Object.keys(users).length;
+     vuur = socket.client.conn.server.clientsCount;
+     io.emit('visit', {total: vuur, uniq: actualx, user:msg.username});
+   });
+  socket.on('disconnect', function () {
+    vuur = socket.client.conn.server.clientsCount;
+    var userixk = connsx[socket.id];
+    delete watchers[socket.username];
+delete users[userixk];
+ var actualx = Object.keys(users).length;
+ if (vuur == 1) {
+   actualx = 1;
+ }
+    io.emit('leftserver', {total: vuur, uniq: actualx, user:userixk});
+  });
+  socket.on('click Episode', function(msg){
+if (msg.sid in watching) {
+  var isgfi = parseInt(watching[msg.sid]);
+  msg.tot = 1+isgfi;
+} else {
+  msg.tot = 1;
+}
+      watching[msg.sid] = msg.tot;
+      watchers[socket.username] = msg.sid;
+ var actfsf = Object.keys(watchers).length;
+  io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, user:socket.username, title:msg.title, allU:actfsf});
+  });
+  socket.on('change episode', function(msg) {
+    if (msg.old_sid in watching) {
+      if (socket.username in watchers) {
+        var isgfi = parseInt(watching[msg.old_sid]);
+        var gihri = isgfi-1;
+        watching[msg.old_sid] = gihri;
+      watchers[socket.username] = msg.new_sid;
+      if (msg.new_sid in watching) {
+        var isgfi = parseInt(watching[msg.new_sid]);
+        var siigf = 1+isgfi;
+      } else {
+        var siigf = 1;
       }
+      watching[msg.new_sid] = siigf;
+    io.emit('change episode', {user: socket.username, newid: msg.new_sid, oldid: msg.old_sid, title:msg.title, total_watching:siigf, old_watching:watching[msg.old_sid]});
+      } else {
+        socket.emit('errorx', "can not complete action");
+        socket.disconnect();
+      }
+
     }
+  });
+  socket.on('close Episode', function(msg){
+     var actfsf = Object.keys(watchers).length;
+if (msg.sid in watching) {
+  if (watchers[socket.username] === msg.sid) {
+    var isgfi = parseInt(watching[msg.sid]);
+    msg.tot = isgfi-1;
+    watching[msg.sid] = msg.tot;
+    delete watchers[socket.username];
+    io.emit('stoppedWatching', {user:socket.username});
+io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
+  } else {
+    socket.emit('errorx', "user is not watching this episode, can not complete action");
   }
 
-  // get client @IP, store in const clients[] and log
-  let handshake = socket.handshake;
-  let ipClient = handshake.address;
-  clients.push({ ip : ipClient, id : socket.id });
-  logWriter.write(`INFO_CONN -- ${ dateUtil.time() } -- ${ ipClient }\n`);
-
-  // if ipClient is in bannedAddresses => disconnect from chat
-  let bannedAddresses = fs.readFileSync(`${ pathToFiles }banned-addresses`, 'utf-8').split(/\r?\n/);
-  if (bannedAddresses.includes(ipClient)) {
-    banClient();
-  }
-
-  // message from client => broadcast to all clients
-  socket.on('message', (data) => {
-    logWriter.write(`NEW_MSG -- ${ dateUtil.fullTime() } -- ${ ipClient } -- ${ data.name } -- ${ data.message }\n`);
-    socket.broadcast.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
-    socket.broadcast.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : ipClient, time : dateUtil.time() });
-  });
-
-  // message from admin => broadcast to all clients with style
-  socket.on('messageFromAdmin', (data) => {
-    if(socket.handshake.session.isAdmin) {
-      logWriter.write(`ADMIN_MSG -- ${ dateUtil.fullTime() } name : ${ data.name } MESSAGE : ${ data.message }\n`);
-      socket.broadcast.emit('messageFromAdmin', { name : data.name, message : data.message, time : dateUtil.time() });
-    }
-  });
-
-  // ban this IP on request from an admin
-  // server log, write to banned-addresses, call banClient(), push to globalBannedAddresses
-
-
-  // add administrator
-  socket.on('addAdmin', (data) => {
-    if(socket.handshake.session.isAdmin || setupMode) {
-      bcrypt.hash(data.password, saltRounds, (err, hash) => {
-        let usersWriter = fs.createWriteStream(`${ pathToFiles }users`, { flags : 'a' });
-        usersWriter.write(`\n${ data.name } ${ hash }`);
-        usersWriter.end();
-      });
-      globalUsersFormated.push(data.name);
-    }
-  });
-
-  // update client number on disconnect
-  socket.on('disconnect', () => {
-    socket.broadcast.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
-  });
-});
-
-
-// take array of users with password, return just name
-const formatUsers = (arrayOfUsers) => {
-	arrayOfUsers = arrayOfUsers.map((user) => {
-		return user.split(' ')[0]
-	});
-	return arrayOfUsers;
-};
-
-// create a random string
-const randomString = () => {
-	const alphanumeric = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-	let res = '';
-	for (let i = 0; i < 10; i++) {
-		res += alphanumeric.charAt(Math.floor(Math.random() * alphanumeric.length));
-	}
-	return res;
 }
 
-//dateUtil object
-const date = new Date();
-const hour = date.getHours();
-const minutes = date.getMinutes();
-const fullTime = date.toLocaleString();
-const dateUtil = {
-	time : () => {
-		return `${ hour }:${ minutes }`;
-	},
-	fullTime : () => {
-		return `${ fullTime }`
-	}
-};
+  });
+  socket.on('updateClientNumber', (data) => {
+    getClientNumber(data.clientNumber);
+});
+
+// add message from server to DOM
+socket.on('message', (data) => {
+    appendMessageToDOM(data.name, data.message, null, data.time);
+});
+
+// add message from server (admin) to DOM
+socket.on('messageFromAdmin', (data) => {
+    appendMessageToDOM(data.name, data.message, 'admin', data.time);
+});
+
+// banned from chat
+socket.on('banned', (data) => {
+    appendMessageToDOM('BAN' , data.message, 'banned', data.time);
+});
+
+});
+
 http.listen(port, function(){
   console.log('listening on *:' + port);
 });
