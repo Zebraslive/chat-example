@@ -99,26 +99,14 @@ io.emit('click Episode', {total_watching: msg.tot, sid: msg.sid, allU:actfsf});
 }
 
   });
-  // open log in append mode
-
-		// emit and update clients number
-		socket.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
-		socket.broadcast.emit('updateClientNumber', { clientNumber : Object.keys(io.sockets.connected).length });
-    socket.on('message', (data) => {
-
-			socket.broadcast.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
-			socket.broadcast.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : ipClient, time : dateUtil.time() });
-		});
-		// banClient function
-		// (case detected @IP banned at connexion (no arg)) : @IP is not allowed to create a socket conn => disconnect
-		// (case asked by admin on connected client(ip arg)) : for all socketId owned by @IP banned => disconnect
 
 
 
+  socket.on('message', function(data) {
 
-
-
-
+    socket.broadcast.emit('message', { name : data.name, message : data.message, time : dateUtil.time() });
+    socket.broadcast.emit('messageForAdmin', { name : data.name, message : data.message, ipClient : ipClient, time : dateUtil.time() });
+  });
 });
 
 http.listen(port, function(){
